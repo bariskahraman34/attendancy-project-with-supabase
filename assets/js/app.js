@@ -12,8 +12,40 @@ async function getData(tableName){
 }
 
 async function listAttendance(){
-    const data = await getData("attendance");
-    console.log("Attendance: ",data);
+    const attendance = await getData("attendance");
+    const students = await getData("Students");
+    const lessons = await getData("Lessons");
+    content.innerHTML = 
+    `
+    <div class="attendance-list">
+        <table style="width: 100%">
+            <thead>
+                <th>Ders Adı</th>
+                <th>Sınıf</th>
+                <th>Öğrenci Adı</th>
+                <th>Öğrenci Soyadı</th>
+                <th>Öğrenci No</th>
+                <th>Yoklama Tarihi</th>
+                <th>Devamlılık Durumu</th>
+            </thead>
+            <tbody>
+            ${attendance.map(item => {
+                return`
+                    <tr>
+                        <td>${lessons.find(lesson => lesson.id == item.lesson_id)?.lesson_name}</td>
+                        <td>${lessons.find(lesson => lesson.id == item.lesson_id)?.class}</td>
+                        <td>${students.find(student => student.student_id == item.student_id)?.first_name}</td>
+                        <td>${students.find(student => student.student_id == item.student_id)?.last_name}</td>
+                        <td>${item.student_id}</td>
+                        <td>${item.created_at}</td>
+                        <td>${item.status == true ? "Devamlı" : "Devamsız"}</td>
+                    </tr>
+                `
+            }).join('')}
+            </tbody>
+        </table>
+    </div>
+    `;
 }
 
 async function listStudents(){
@@ -77,28 +109,30 @@ async function listLessons(){
     `;
 }
 
-function addStudent(){
+async function addStudent(){
+    const lessonsData = await getData("Lessons");
     const form = 
     `
     <form class="add-form" id="add-student-form">
         <label for="first_name">İsim</label><br>
-        <input type="text" id="first_name" name="first_name"><br>
+        <input type="text" id="first_name" name="first_name" required><br>
         
         <label for="last_name">Soyisim</label><br>
-        <input type="text" id="last_name" name="last_name"><br>
+        <input type="text" id="last_name" name="last_name" required><br>
         
         <label for="student_id">Öğrenci ID</label><br>
-        <input type="text" id="student_id" name="student_id"><br>
+        <input type="text" id="student_id" name="student_id" required><br>
         
         <label for="email">E-posta</label><br>
-        <input type="email" id="email" name="email"><br>
+        <input type="email" id="email" name="email" required><br>
         
         <label for="class">Ders</label><br>
-        <select id="class" name="class">
-            <option value="101">JavaScript</option>
-            <option value="102">React</option>
+        <select id="class" name="class" required>
+            <option value="" selected disabled hidden>Ders Seçiniz</option>
+            ${lessonsData.map(lesson => {
+                return `<option value="${lesson.class}">${lesson.lesson_name}</option>`
+            }).join('')}
         </select><br><br>
-        
         <button class="form-btn" type="submit">Gönder</button>
     </form>
     `;
@@ -126,3 +160,5 @@ async function createData(userData){
     }
     return listStudents();
 }
+
+listStudents();
