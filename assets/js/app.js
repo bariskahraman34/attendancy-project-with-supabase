@@ -22,12 +22,14 @@ async function listStudents(){
     content.innerHTML = 
     `
     <div class="students-list">
+        <button class="table-btn" id="add-student-btn">Öğrenci Ekle</button>
         <table style="width: 100%">
             <thead>
                 <th>İsim</th>
                 <th>Soyisim</th>
                 <th>Öğrenci ID</th>
                 <th>Email</th>
+                <th>Sınıf</th>
             </thead>
             <tbody>
             ${data.map(student => {
@@ -37,6 +39,7 @@ async function listStudents(){
                         <td>${student.last_name}</td>
                         <td>${student.student_id}</td>
                         <td>${student.email}</td>
+                        <td>${student.class}</td>
                     </tr>
                 `
             }).join('')}
@@ -44,6 +47,8 @@ async function listStudents(){
         </table>
     </div>
     `;
+    const addStudentBtn = document.querySelector('#add-student-btn');
+    addStudentBtn.addEventListener('click',() => addStudent());
 }
 
 async function listLessons(){
@@ -51,6 +56,52 @@ async function listLessons(){
     console.log("Lessons: ",data);
 }
 
-listLessons();
-listStudents();
-listAttendance();
+function addStudent(){
+    const form = 
+    `
+    <form class="add-form" id="add-student-form">
+        <label for="first_name">İsim</label><br>
+        <input type="text" id="first_name" name="first_name"><br>
+        
+        <label for="last_name">Soyisim</label><br>
+        <input type="text" id="last_name" name="last_name"><br>
+        
+        <label for="student_id">Öğrenci ID</label><br>
+        <input type="text" id="student_id" name="student_id"><br>
+        
+        <label for="email">E-posta</label><br>
+        <input type="email" id="email" name="email"><br>
+        
+        <label for="class">Ders</label><br>
+        <select id="class" name="class">
+            <option value="101">JavaScript</option>
+            <option value="102">React</option>
+        </select><br><br>
+        
+        <button class="form-btn" type="submit">Gönder</button>
+    </form>
+    `;
+    content.innerHTML += form;
+    const addStudentForm = document.querySelector('#add-student-form');
+    addStudentForm.addEventListener('submit',(e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const formObj = Object.fromEntries(formData);
+        return createData(formObj)
+    })
+}
+
+async function createData(userData){
+    const { error } = await _supabase.from('Students').insert(userData);
+    if(error){
+        if(error.code === "23505"){
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Bu kullanıcı zaten mevcut!",
+                confirmButtonText:"Anladım"
+              });
+        }
+    }
+    return listStudents();
+}
