@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Yoklama</title>
+</head>
+<body>
+    <main class="container">
+        <aside class="aside-menu">
+            <nav>
+                <a href="#" class="list-btn" onclick="listStudents()" id="students-list-btn">Öğrencileri Listele</a>
+                <a href="#" class="list-btn" onclick="listLessons()" id="lessons-list-btn">Dersleri Listele</a>
+                <a href="#" class="list-btn" onclick="listAttendance()" id="attendance-list-btn">Yoklamaları Görüntüle</a>
+                <a href="#" class="list-btn" onclick="createAttendance()" id="create-attendance-btn">Yoklama Oluştur</a>
+            </nav>
+        </aside>
+        <div class="content">
+
+        </div>
+    </main>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

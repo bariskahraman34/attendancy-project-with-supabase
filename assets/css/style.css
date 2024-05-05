@@ -1,0 +1,79 @@
+*,*::after,*::before{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #ffffff;
+}
+
+.container{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    gap: 20px;
+    min-height: 100vh;
+    margin-inline: auto;
+}
+
+aside {
+    background-color: #111827;
+    padding: 2rem;
+}
+
+aside > nav {
+    display: flex;
+    flex-direction: column;
+}
+
+aside > nav > a {
+    text-decoration: none;
+    color: white;
+    margin-bottom: 0.5em;
+    padding: 1rem;
+    border-bottom: 1px solid #333;
+    border-color: rgba(55,65,81,1);
+    width: 100%;
+}
+aside > nav > a:hover{ 
+    color: rgba(209,213,219,1);
+    background-color: rgba(55,65,81,1);
+    border-radius: 0.25rem;
+}
+
+.content{
+    margin: 20px 40px;
+}
+
+td {
+    padding: 10px 0px 10px 10px;
+    border-bottom: 1px solid black;
+  }
+  
+  td:first-child {
+    border-left: 1px solid black;
+  }
+  
+  td:last-child {
+    border-right: 1px solid black;
+  }
+  table {
+    border-collapse: collapse;
+    border-bottom: 3px solid #4a8ae1;
+  }
+  thead > tr > th {
+    background-color: #4a8ae1;
+    color: white;
+    padding: 10px;
+    text-align: left;
+  }
+  th:first-child {
+    border-top-left-radius: 20px;
+  }
+  th:last-child {
+    border-top-right-radius: 20px;
+  }
+
+  tbody > tr:nth-of-type(odd) {
+    background-color: #d3dfee;
+  }
