@@ -54,6 +54,27 @@ async function listStudents(){
 async function listLessons(){
     const data = await getData("Lessons");
     console.log("Lessons: ",data);
+    content.innerHTML = 
+    `
+    <div class="lessons-list">
+        <table style="width: 100%">
+            <thead>
+                <th>Ders Adı</th>
+                <th>Sınıf</th>
+            </thead>
+            <tbody>
+            ${data.map(lesson => {
+                return`
+                    <tr>
+                        <td>${lesson.lesson_name}</td>
+                        <td>${lesson.class}</td>
+                    </tr>
+                `
+            }).join('')}
+            </tbody>
+        </table>
+    </div>
+    `;
 }
 
 function addStudent(){
