@@ -93,9 +93,6 @@ tbody > tr:nth-of-type(odd) {
   cursor: pointer;
 }
 
-.add-form {
-}
-
 input[type="text"],
 input[type="number"],
 input[type="email"],
