@@ -122,3 +122,10 @@ label{
     cursor: pointer;
     font-size: 18px;
 }
+
+.create-attendancy-div{
+    margin-top: 200px;
+    button{
+        margin-top: 60px;
+    }
+}
