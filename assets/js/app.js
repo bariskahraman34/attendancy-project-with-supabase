@@ -50,7 +50,6 @@ async function listAttendance(){
 
 async function listStudents(){
     const data = await getData("Students");
-    console.log("Students: ",data);
     content.innerHTML = 
     `
     <div class="students-list">
@@ -85,7 +84,6 @@ async function listStudents(){
 
 async function listLessons(){
     const data = await getData("Lessons");
-    console.log("Lessons: ",data);
     content.innerHTML = 
     `
     <div class="lessons-list">
@@ -142,12 +140,12 @@ async function addStudent(){
         e.preventDefault();
         const formData = new FormData(e.target);
         const formObj = Object.fromEntries(formData);
-        return createData(formObj)
+        return createData("Students",formObj)
     })
 }
 
-async function createData(userData){
-    const { error } = await _supabase.from('Students').insert(userData);
+async function createData(tableName,data){
+    const { error } = await _supabase.from(tableName).insert(data);
     if(error){
         if(error.code === "23505"){
             Swal.fire({
@@ -158,12 +156,20 @@ async function createData(userData){
               });
         }
     }
-    return listStudents();
+    if(tableName == "Students"){
+        Swal.fire("Öğrenci Başarıyla Eklendi!");
+        return listStudents();
+    }else if(tableName == "Lessons"){
+        return listLessons();
+    }else if(tableName == "attendance"){
+        Swal.fire("Yoklama Başarıyla Tamamlandı!");
+        return listAttendance();
+    }
 }
 
 async function createAttendancy(){
     const lessons = await getData("Lessons");
-    content.innerHTML = 
+    content.innerHTML =
     `
     <div class="create-attendancy-div">
         <form id="create-attendancy-form">
@@ -193,59 +199,60 @@ async function handleAttendancyForm(e){
     e.preventDefault();
     const classId = document.querySelector("select[name='lesson']").value;
     const students = await getSpecialData("Students","class",`${classId}`);
-    console.log(students)
-    console.log(classId)
-    content.innerHTML = 
-    `
-        <table style="width: 100%">
-            <thead>
-                <th>İsim</th>
-                <th>Soyisim</th>
-                <th>Öğrenci ID</th>
-                <th>Email</th>
-                <th>Sınıf</th>
-                <th>Yoklama Durumu</th>
-            </thead>
-            <tbody>
-            ${students.map(student => {
-                return`
-                    <tr>
-                        <td>${student.first_name}</td>
-                        <td>${student.last_name}</td>
-                        <td>${student.student_id}</td>
-                        <td>${student.email}</td>
-                        <td>${student.class}</td>
-                        <td>
-                        <form class="status-form">
-                              <input type="radio" id="${student.student_id}-true" name="${student.student_id}" value="true">
-                              <label for="${student.student_id}-true">Devamlı</label><br>
-                              <input type="radio" id="${student.student_id}-false" name="${student.student_id}" value="false">
-                              <label for="${student.student_id}-false">Devamsız</label>
-                            <input type="submit" style="display: none;" />
-                        </form>
-                        </td>
-                    </tr>
-                `
-            }).join('')}
-            </tbody>
-        </table>
-        <button type="submit" id="status-submit-btn" class="form-btn">Tamamla</button>
-    `;
-    const submitStatusBtn = document.querySelector('#status-submit-btn');
-    const checkedInputs = [];
-    submitStatusBtn.addEventListener('click',(e) => {
-        e.preventDefault();
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
-        const day = (date.getDate()) < 10 ?  `0${date.getDate()}` : `${date.getDate()}`;
-        const created_at = `${year}-${month}-${day}`;
-        
-        console.log(checkedInputs);
-        const radioInputs = document.querySelectorAll('input[type="radio"]');
-        radioInputs.forEach(input => input.checked ? checkedInputs.push({student_id:input.name,status:input.value,created_at:created_at}) : "")
-    })
+    const lessons = await getData("Lessons");
+    if(students.length > 0){
+        content.innerHTML = 
+        `
+            <table style="width: 100%">
+                <thead>
+                    <th>İsim</th>
+                    <th>Soyisim</th>
+                    <th>Öğrenci ID</th>
+                    <th>Email</th>
+                    <th>Sınıf</th>
+                    <th>Yoklama Durumu</th>
+                </thead>
+                <tbody>
+                ${students.map(student => {
+                    return`
+                        <tr>
+                            <td>${student.first_name}</td>
+                            <td>${student.last_name}</td>
+                            <td>${student.student_id}</td>
+                            <td>${student.email}</td>
+                            <td>${student.class}</td>
+                            <td>
+                                <form class="status-form">
+                                        <input type="radio" id="${student.student_id}-true" name="${student.student_id}" value="true">
+                                        <label for="${student.student_id}-true">Devamlı</label><br>
+                                        <input type="radio" id="${student.student_id}-false" name="${student.student_id}" value="false">
+                                        <label for="${student.student_id}-false">Devamsız</label>
+                                </form>
+                            </td>
+                        </tr>
+                    `
+                }).join('')}
+                </tbody>
+            </table>
+            <button type="submit" id="status-submit-btn" class="form-btn">Tamamla</button>
+        `;
+        const submitStatusBtn = document.querySelector('#status-submit-btn');
+        const attendancyArray = [];
+        submitStatusBtn.addEventListener('click',(e) => {
+            e.preventDefault();
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+            const day = (date.getDate()) < 10 ?  `0${date.getDate()}` : `${date.getDate()}`;
+            const created_at = `${year}-${month}-${day}`;
+            console.log(attendancyArray);
+            const radioInputs = document.querySelectorAll('input[type="radio"]');
+            radioInputs.forEach(input => input.checked ? attendancyArray.push({student_id:input.name,status:input.value,created_at:created_at,lesson_id:lessons.find(lesson => lesson.class == students.find(student => student.student_id == input.name)?.class)?.id}) : false);
+            return createData("attendance",attendancyArray);
+        })
+    }else{
+        content.innerHTML = "<div><h3>Bu sınıfa ait öğrenci bulunamadı.</h3></div>"
+    }
 }
-
 
 listStudents();
