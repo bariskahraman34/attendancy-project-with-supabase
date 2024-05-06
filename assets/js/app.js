@@ -235,11 +235,17 @@ async function handleAttendancyForm(e){
     const checkedInputs = [];
     submitStatusBtn.addEventListener('click',(e) => {
         e.preventDefault();
-        const radioInputs = document.querySelectorAll('input[type="radio"]');
-        radioInputs.forEach(input => input.checked ? checkedInputs.push({student_id:input.name,status:input.value}) : "")
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+        const day = (date.getDate()) < 10 ?  `0${date.getDate()}` : `${date.getDate()}`;
+        const created_at = `${year}-${month}-${day}`;
+        
         console.log(checkedInputs);
+        const radioInputs = document.querySelectorAll('input[type="radio"]');
+        radioInputs.forEach(input => input.checked ? checkedInputs.push({student_id:input.name,status:input.value,created_at:created_at}) : "")
     })
-
 }
+
 
 listStudents();
