@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.css" integrity="sha512-U9Y1sGB3sLIpZm3ePcrKbXVhXlnQNcuwGQJ2WjPjnp6XHqVTdgIlbaDzJXJIAuCTp3y22t+nhI4B88F/5ldjFA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/css/style.css">
     <title>Yoklama</title>
 </head>
 <body>
+    <header class="desktop-none mobile-menu">
+        <h3>Yoklama</h3>
+        <a class="toggle-menu"><i class="fa-solid fa-bars"></i></a>
+    </header>
     <main class="container">
         <aside class="aside-menu">
+            <button class="close-menu desktop-none"><i class="fa-solid fa-xmark"></i></button>
             <nav>
                 <a href="#" class="list-btn active" onclick="listStudents()" id="students-list-btn">Öğrencileri Listele</a>
                 <a href="#" class="list-btn" onclick="listLessons()" id="lessons-list-btn">Dersleri Listele</a>

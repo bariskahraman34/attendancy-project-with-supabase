@@ -3,6 +3,17 @@ const SUPABASE_URL = 'https://jkkztvzwqadcwqizlquo.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impra3p0dnp3cWFkY3dxaXpscXVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQ5Mjc0NjMsImV4cCI6MjAzMDUwMzQ2M30.p-HDJiefI2bBt6dY_kk01WzWD2Xu628SfxymPg0xGGA';
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+const toggleMenu = document.querySelector('.toggle-menu');
+const asideMenu = document.querySelector('.aside-menu');
+const closeMenu = document.querySelector('.close-menu');
+toggleMenu.addEventListener('click',() => {
+    asideMenu.classList.add('show');
+})
+
+closeMenu.addEventListener('click',() => {
+    asideMenu.classList.remove('show');
+})
+
 async function getData(tableName){
     const { data, error } = await _supabase.from(`${tableName}`).select()
     if(error){
@@ -17,8 +28,8 @@ async function listAttendance(){
     const lessons = await getData("Lessons");
     content.innerHTML = 
     `
-    <div class="attendance-list">
-        <table style="width: 100%">
+    <div class="list-container" id="attendance-list">
+        <table>
             <thead>
                 <th>Ders Adı</th>
                 <th>Sınıf</th>
@@ -52,9 +63,9 @@ async function listStudents(){
     const data = await getData("Students");
     content.innerHTML = 
     `
-    <div class="students-list">
+    <div class="list-container" id="students-list">
         <button class="table-btn" id="add-student-btn">Öğrenci Ekle</button>
-        <table style="width: 100%">
+        <table>
             <thead>
                 <th>İsim</th>
                 <th>Soyisim</th>
@@ -86,8 +97,8 @@ async function listLessons(){
     const data = await getData("Lessons");
     content.innerHTML = 
     `
-    <div class="lessons-list">
-        <table style="width: 100%">
+    <div class="list-container" id="lessons-list">
+        <table>
             <thead>
                 <th>Ders Adı</th>
                 <th>Sınıf</th>
@@ -203,7 +214,7 @@ async function handleAttendancyForm(e){
     if(students.length > 0){
         content.innerHTML = 
         `
-            <table style="width: 100%">
+            <table>
                 <thead>
                     <th>İsim</th>
                     <th>Soyisim</th>

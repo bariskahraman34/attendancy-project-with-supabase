@@ -6,11 +6,16 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: 'Open Sans', sans-serif;
 }
 
 body {
   background-color: #ffffff;
+  font-family: 'Open Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+.desktop-none{
+  display: none;
 }
 
 .container {
@@ -19,6 +24,7 @@ body {
   gap: 20px;
   min-height: 100vh;
   margin-inline: auto;
+  position: relative;
 }
 
 aside {
@@ -63,6 +69,7 @@ td:last-child {
   border-right: 1px solid black;
 }
 table {
+  width: 100%;
   border-collapse: collapse;
   border-bottom: 3px solid #4a8ae1;
 }
@@ -128,4 +135,57 @@ label{
     button{
         margin-top: 60px;
     }
+}
+
+@media(width < 768px){
+  .desktop-none{
+    display: block;
+  }
+  .aside-menu{
+    position: fixed;
+    flex-direction: column;
+    height: 100%;
+    top: 0px;
+    right: -70%;
+    box-shadow: 0px 20px 50px -20px rgba(29, 32, 38, 0.5031);
+    width: 300px;
+    border-radius: 8px;
+    z-index: 999;
+    transition: .25s;
+    opacity: 0;
+  }
+
+  .aside-menu.show{
+    opacity: 1;
+    right: 0;
+  }
+
+  .close-menu{
+    border: none;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .mobile-menu{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 30px;
+    border-bottom: 1px solid #ced4da;
+  }
+
+  .toggle-menu{
+    cursor: pointer;
+    padding: 10px;
+    background: none;
+    border: none;
+    i{
+      color: #111827;
+      font-size: 20px;
+    }
+  }
 }
