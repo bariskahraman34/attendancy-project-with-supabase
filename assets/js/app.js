@@ -26,8 +26,28 @@ async function listAttendance(){
     const attendance = await getData("attendance");
     const students = await getData("Students");
     const lessons = await getData("Lessons");
+    const uniqueDates = [];
+    attendance.forEach(att => !uniqueDates.includes(att.created_at) ? uniqueDates.push(att.created_at) : []);
     content.innerHTML = 
     `
+    <div class="filter-form">
+        <h3>Filtreleme</h3>
+        <form  id="filter-attendancy">
+            <select id="lessons" name="lesson_id" required>
+                <option value="" selected disabled hidden>Ders seçiniz</option>
+                ${lessons.map(lesson => {
+                    return `<option value="${lesson.id}">${lesson.lesson_name}</option>`
+                }).join('')}
+            </select>
+            <select id="date" name="created_at" required>
+                <option value="" selected disabled hidden>Yoklama tarihini seçiniz</option>
+                ${uniqueDates.map(att => {
+                    return `<option value="${att}">${att}</option>`
+                }).join('')}
+            </select>
+            <button>Tamamla</button>
+        </form>
+    </div>
     <div class="list-container" id="attendance-list">
         <table>
             <thead>
@@ -57,7 +77,58 @@ async function listAttendance(){
         </table>
     </div>
     `;
+    const filterAttendancyForm = document.querySelector('#filter-attendancy');
+    filterAttendancyForm.addEventListener('submit',filterAttendancy);
 }
+
+async function filterAttendancy(e){
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const formObj = Object.fromEntries(formData);
+    const students = await getData("Students");
+    const lessons = await getData("Lessons");
+    let { data: attendance, error } = await _supabase
+    .from('attendance')
+    .select("*")
+    .eq('lesson_id', `${formObj.lesson_id}`)
+    .eq('created_at',`${formObj.created_at}`);
+    const attendanceContainer = document.querySelector('#attendance-list');
+    if(attendance.length > 0){
+        attendanceContainer.innerHTML =
+        `
+        <table>
+            <thead>
+                <th>Ders Adı</th>
+                <th>Sınıf</th>
+                <th>Öğrenci Adı</th>
+                <th>Öğrenci Soyadı</th>
+                <th>Öğrenci No</th>
+                <th>Yoklama Tarihi</th>
+                <th>Devamlılık Durumu</th>
+            </thead>
+            <tbody>
+            ${attendance.map(item => {
+                return`
+                    <tr>
+                        <td>${lessons.find(lesson => lesson.id == item.lesson_id)?.lesson_name}</td>
+                        <td>${lessons.find(lesson => lesson.id == item.lesson_id)?.class}</td>
+                        <td>${students.find(student => student.student_id == item.student_id)?.first_name}</td>
+                        <td>${students.find(student => student.student_id == item.student_id)?.last_name}</td>
+                        <td>${item.student_id}</td>
+                        <td>${item.created_at}</td>
+                        <td>${item.status == true ? "Devamlı" : "Devamsız"}</td>
+                    </tr>
+                `
+            }).join('')}
+            </tbody>
+        </table>
+        `;
+    }else{
+        attendanceContainer.innerHTML = "<h3>Bu filtreye ait öğrenci bulunamadı.</h3>"
+    }
+}
+
+
 
 async function listStudents(){
     const data = await getData("Students");
@@ -256,7 +327,6 @@ async function handleAttendancyForm(e){
             const month = (date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
             const day = (date.getDate()) < 10 ?  `0${date.getDate()}` : `${date.getDate()}`;
             const created_at = `${year}-${month}-${day}`;
-            console.log(attendancyArray);
             const radioInputs = document.querySelectorAll('input[type="radio"]');
             radioInputs.forEach(input => input.checked ? attendancyArray.push({student_id:input.name,status:input.value,created_at:created_at,lesson_id:lessons.find(lesson => lesson.class == students.find(student => student.student_id == input.name)?.class)?.id}) : false);
             return createData("attendance",attendancyArray);
